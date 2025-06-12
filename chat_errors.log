@@ -1,0 +1,341 @@
+[12-Jun-2025 10:03:10 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[12-Jun-2025 10:03:10 UTC] Getting rooms for user ID: 6
+[12-Jun-2025 10:03:10 UTC] Found 4 rooms
+[12-Jun-2025 10:03:15 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:03:15 UTC] Get friends error: SQLSTATE[HY093]: Invalid parameter number
+[12-Jun-2025 10:04:09 UTC] === CHAT API STARTED === Action: get_account Query: none
+[12-Jun-2025 10:07:59 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[12-Jun-2025 10:07:59 UTC] Getting rooms for user ID: 6
+[12-Jun-2025 10:07:59 UTC] Found 4 rooms
+[12-Jun-2025 10:08:01 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:08:37 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:08:40 UTC] === CHAT API STARTED === Action: get_account Query: none
+[12-Jun-2025 10:08:48 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:08:51 UTC] === CHAT API STARTED === Action: search_users Query: b
+[12-Jun-2025 10:08:51 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:08:51 UTC] User ID: 6
+[12-Jun-2025 10:08:51 UTC] Query: b
+[12-Jun-2025 10:08:51 UTC] Exclude SQL: 
+            SELECT friend_id AS id FROM friends WHERE user_id = :user_id
+            UNION
+            SELECT user_id AS id FROM friends WHERE friend_id = :user_id
+        
+[12-Jun-2025 10:08:51 UTC] Search users error: SQLSTATE[HY093]: Invalid parameter number
+[12-Jun-2025 10:08:51 UTC] Exception trace: #0 C:\Users\teren\OneDrive\Documents\Internet Program project\chat_api.php(335): PDOStatement->execute()
+#1 {main}
+[12-Jun-2025 10:09:00 UTC] === CHAT API STARTED === Action: search_users Query: br
+[12-Jun-2025 10:09:00 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:09:00 UTC] User ID: 6
+[12-Jun-2025 10:09:00 UTC] Query: br
+[12-Jun-2025 10:09:00 UTC] Exclude SQL: 
+            SELECT friend_id AS id FROM friends WHERE user_id = :user_id
+            UNION
+            SELECT user_id AS id FROM friends WHERE friend_id = :user_id
+        
+[12-Jun-2025 10:09:00 UTC] Search users error: SQLSTATE[HY093]: Invalid parameter number
+[12-Jun-2025 10:09:00 UTC] Exception trace: #0 C:\Users\teren\OneDrive\Documents\Internet Program project\chat_api.php(335): PDOStatement->execute()
+#1 {main}
+[12-Jun-2025 10:13:04 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[12-Jun-2025 10:13:05 UTC] Getting rooms for user ID: 6
+[12-Jun-2025 10:13:05 UTC] Found 4 rooms
+[12-Jun-2025 10:13:07 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:13:11 UTC] === CHAT API STARTED === Action: search_users Query: b
+[12-Jun-2025 10:13:11 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:11 UTC] User ID: 6
+[12-Jun-2025 10:13:11 UTC] Query: b
+[12-Jun-2025 10:13:11 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:11 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:11 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:11 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:11 UTC] Final params: ["%b%","%b%","%b%",6]
+[12-Jun-2025 10:13:11 UTC] Param count: 4
+[12-Jun-2025 10:13:11 UTC] Found users: 1
+[12-Jun-2025 10:13:11 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:17 UTC] === CHAT API STARTED === Action: search_users Query: br
+[12-Jun-2025 10:13:17 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:17 UTC] User ID: 6
+[12-Jun-2025 10:13:17 UTC] Query: br
+[12-Jun-2025 10:13:17 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:17 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:17 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:17 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:17 UTC] Final params: ["%br%","%br%","%br%",6]
+[12-Jun-2025 10:13:17 UTC] Param count: 4
+[12-Jun-2025 10:13:17 UTC] Found users: 0
+[12-Jun-2025 10:13:17 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:18 UTC] === CHAT API STARTED === Action: search_users Query: b
+[12-Jun-2025 10:13:18 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:18 UTC] User ID: 6
+[12-Jun-2025 10:13:18 UTC] Query: b
+[12-Jun-2025 10:13:18 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:18 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:18 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:18 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:18 UTC] Final params: ["%b%","%b%","%b%",6]
+[12-Jun-2025 10:13:18 UTC] Param count: 4
+[12-Jun-2025 10:13:18 UTC] Found users: 1
+[12-Jun-2025 10:13:18 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:20 UTC] === CHAT API STARTED === Action: search_users Query: j
+[12-Jun-2025 10:13:20 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:20 UTC] User ID: 6
+[12-Jun-2025 10:13:20 UTC] Query: j
+[12-Jun-2025 10:13:20 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:20 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:20 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:20 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:20 UTC] Final params: ["%j%","%j%","%j%",6]
+[12-Jun-2025 10:13:20 UTC] Param count: 4
+[12-Jun-2025 10:13:20 UTC] Found users: 3
+[12-Jun-2025 10:13:20 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:32 UTC] === CHAT API STARTED === Action: search_users Query: j
+[12-Jun-2025 10:13:32 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:32 UTC] User ID: 6
+[12-Jun-2025 10:13:32 UTC] Query: j
+[12-Jun-2025 10:13:32 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:32 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:32 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:32 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:32 UTC] Final params: ["%j%","%j%","%j%",6]
+[12-Jun-2025 10:13:32 UTC] Param count: 4
+[12-Jun-2025 10:13:32 UTC] Found users: 3
+[12-Jun-2025 10:13:32 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:34 UTC] === CHAT API STARTED === Action: search_users Query: jo
+[12-Jun-2025 10:13:34 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:34 UTC] User ID: 6
+[12-Jun-2025 10:13:34 UTC] Query: jo
+[12-Jun-2025 10:13:34 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:34 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:34 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:34 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:34 UTC] Final params: ["%jo%","%jo%","%jo%",6]
+[12-Jun-2025 10:13:34 UTC] Param count: 4
+[12-Jun-2025 10:13:34 UTC] Found users: 2
+[12-Jun-2025 10:13:34 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:37 UTC] === CHAT API STARTED === Action: search_users Query: joh
+[12-Jun-2025 10:13:37 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:37 UTC] User ID: 6
+[12-Jun-2025 10:13:37 UTC] Query: joh
+[12-Jun-2025 10:13:37 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:37 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:37 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:37 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:37 UTC] Final params: ["%joh%","%joh%","%joh%",6]
+[12-Jun-2025 10:13:37 UTC] Param count: 4
+[12-Jun-2025 10:13:37 UTC] Found users: 1
+[12-Jun-2025 10:13:37 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:39 UTC] === CHAT API STARTED === Action: search_users Query: jo
+[12-Jun-2025 10:13:39 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:39 UTC] User ID: 6
+[12-Jun-2025 10:13:39 UTC] Query: jo
+[12-Jun-2025 10:13:39 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:39 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:39 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:39 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:39 UTC] Final params: ["%jo%","%jo%","%jo%",6]
+[12-Jun-2025 10:13:39 UTC] Param count: 4
+[12-Jun-2025 10:13:39 UTC] Found users: 2
+[12-Jun-2025 10:13:39 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:39 UTC] === CHAT API STARTED === Action: search_users Query: j
+[12-Jun-2025 10:13:39 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:39 UTC] User ID: 6
+[12-Jun-2025 10:13:39 UTC] Query: j
+[12-Jun-2025 10:13:39 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:39 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:39 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:39 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:39 UTC] Final params: ["%j%","%j%","%j%",6]
+[12-Jun-2025 10:13:39 UTC] Param count: 4
+[12-Jun-2025 10:13:39 UTC] Found users: 3
+[12-Jun-2025 10:13:39 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:40 UTC] === CHAT API STARTED === Action: search_users Query: b
+[12-Jun-2025 10:13:40 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:40 UTC] User ID: 6
+[12-Jun-2025 10:13:40 UTC] Query: b
+[12-Jun-2025 10:13:40 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:40 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:40 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:40 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:40 UTC] Final params: ["%b%","%b%","%b%",6]
+[12-Jun-2025 10:13:40 UTC] Param count: 4
+[12-Jun-2025 10:13:40 UTC] Found users: 1
+[12-Jun-2025 10:13:40 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:43 UTC] === CHAT API STARTED === Action: search_users Query: br
+[12-Jun-2025 10:13:43 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:43 UTC] User ID: 6
+[12-Jun-2025 10:13:43 UTC] Query: br
+[12-Jun-2025 10:13:43 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:43 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:43 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:43 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:43 UTC] Final params: ["%br%","%br%","%br%",6]
+[12-Jun-2025 10:13:43 UTC] Param count: 4
+[12-Jun-2025 10:13:43 UTC] Found users: 0
+[12-Jun-2025 10:13:43 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:13:45 UTC] === CHAT API STARTED === Action: search_users Query: b
+[12-Jun-2025 10:13:45 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:13:45 UTC] User ID: 6
+[12-Jun-2025 10:13:45 UTC] Query: b
+[12-Jun-2025 10:13:45 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:13:45 UTC] Found friend IDs: []
+[12-Jun-2025 10:13:45 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:13:45 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:13:45 UTC] Final params: ["%b%","%b%","%b%",6]
+[12-Jun-2025 10:13:45 UTC] Param count: 4
+[12-Jun-2025 10:13:45 UTC] Found users: 1
+[12-Jun-2025 10:13:45 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:14:35 UTC] === CHAT API STARTED === Action: search_users Query: j
+[12-Jun-2025 10:14:35 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:14:35 UTC] User ID: 6
+[12-Jun-2025 10:14:35 UTC] Query: j
+[12-Jun-2025 10:14:35 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:14:35 UTC] Found friend IDs: []
+[12-Jun-2025 10:14:35 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:14:35 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:14:35 UTC] Final params: ["%j%","%j%","%j%",6]
+[12-Jun-2025 10:14:35 UTC] Param count: 4
+[12-Jun-2025 10:14:35 UTC] Found users: 3
+[12-Jun-2025 10:14:35 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:15:21 UTC] === CHAT API STARTED === Action: add_friend Query: none
+[12-Jun-2025 10:15:21 UTC] Add friend error: SQLSTATE[HY093]: Invalid parameter number
+[12-Jun-2025 10:23:41 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[12-Jun-2025 10:23:41 UTC] Getting rooms for user ID: 6
+[12-Jun-2025 10:23:41 UTC] Found 4 rooms
+[12-Jun-2025 10:23:57 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:24:01 UTC] === CHAT API STARTED === Action: search_users Query: j
+[12-Jun-2025 10:24:01 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:24:01 UTC] User ID: 6
+[12-Jun-2025 10:24:01 UTC] Query: j
+[12-Jun-2025 10:24:01 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:24:01 UTC] Found friend IDs: []
+[12-Jun-2025 10:24:01 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:24:01 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:24:01 UTC] Final params: ["%j%","%j%","%j%",6]
+[12-Jun-2025 10:24:01 UTC] Param count: 4
+[12-Jun-2025 10:24:01 UTC] Found users: 3
+[12-Jun-2025 10:24:01 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:24:03 UTC] === CHAT API STARTED === Action: search_users Query: jo
+[12-Jun-2025 10:24:03 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:24:03 UTC] User ID: 6
+[12-Jun-2025 10:24:03 UTC] Query: jo
+[12-Jun-2025 10:24:03 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:24:03 UTC] Found friend IDs: []
+[12-Jun-2025 10:24:03 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:24:03 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:24:03 UTC] Final params: ["%jo%","%jo%","%jo%",6]
+[12-Jun-2025 10:24:03 UTC] Param count: 4
+[12-Jun-2025 10:24:03 UTC] Found users: 2
+[12-Jun-2025 10:24:03 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:24:04 UTC] === CHAT API STARTED === Action: search_users Query: joh
+[12-Jun-2025 10:24:04 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:24:04 UTC] User ID: 6
+[12-Jun-2025 10:24:04 UTC] Query: joh
+[12-Jun-2025 10:24:04 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:24:04 UTC] Found friend IDs: []
+[12-Jun-2025 10:24:04 UTC] Final exclude IDs: [6]
+[12-Jun-2025 10:24:04 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[12-Jun-2025 10:24:04 UTC] Final params: ["%joh%","%joh%","%joh%",6]
+[12-Jun-2025 10:24:04 UTC] Param count: 4
+[12-Jun-2025 10:24:04 UTC] Found users: 1
+[12-Jun-2025 10:24:04 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:24:33 UTC] === CHAT API STARTED === Action: add_friend Query: none
+[12-Jun-2025 10:24:33 UTC] === ADD FRIEND DEBUG ===
+[12-Jun-2025 10:24:33 UTC] Current user ID: 6
+[12-Jun-2025 10:24:33 UTC] Friend ID to add: 2
+[12-Jun-2025 10:24:33 UTC] Raw input data: {"user_id":2}
+[12-Jun-2025 10:24:33 UTC] Check SQL: SELECT * FROM friends WHERE 
+                     (user_id = ? AND friend_id = ?) OR 
+                     (user_id = ? AND friend_id = ?)
+[12-Jun-2025 10:24:33 UTC] Check params: [6,2,2,6]
+[12-Jun-2025 10:24:33 UTC] Insert SQL: INSERT INTO friends (user_id, friend_id, status, requested_at, accepted_at) 
+                      VALUES (?, ?, 'accepted', NOW(), NOW())
+[12-Jun-2025 10:24:33 UTC] Insert params: [6,2]
+[12-Jun-2025 10:24:33 UTC] Friend added successfully
+[12-Jun-2025 10:24:33 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[12-Jun-2025 10:24:47 UTC] === CHAT API STARTED === Action: search_users Query: j
+[12-Jun-2025 10:24:47 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:24:47 UTC] User ID: 6
+[12-Jun-2025 10:24:47 UTC] Query: j
+[12-Jun-2025 10:24:47 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:24:47 UTC] Found friend IDs: [2]
+[12-Jun-2025 10:24:47 UTC] Final exclude IDs: [6,2]
+[12-Jun-2025 10:24:47 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?,?) LIMIT 10
+[12-Jun-2025 10:24:47 UTC] Final params: ["%j%","%j%","%j%",6,2]
+[12-Jun-2025 10:24:47 UTC] Param count: 5
+[12-Jun-2025 10:24:47 UTC] Found users: 2
+[12-Jun-2025 10:24:47 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:24:47 UTC] === CHAT API STARTED === Action: search_users Query: ja
+[12-Jun-2025 10:24:47 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:24:47 UTC] User ID: 6
+[12-Jun-2025 10:24:47 UTC] Query: ja
+[12-Jun-2025 10:24:47 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:24:47 UTC] Found friend IDs: [2]
+[12-Jun-2025 10:24:47 UTC] Final exclude IDs: [6,2]
+[12-Jun-2025 10:24:47 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?,?) LIMIT 10
+[12-Jun-2025 10:24:47 UTC] Final params: ["%ja%","%ja%","%ja%",6,2]
+[12-Jun-2025 10:24:47 UTC] Param count: 5
+[12-Jun-2025 10:24:47 UTC] Found users: 1
+[12-Jun-2025 10:24:47 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:24:48 UTC] === CHAT API STARTED === Action: search_users Query: jan
+[12-Jun-2025 10:24:48 UTC] === SEARCH USERS DEBUG START ===
+[12-Jun-2025 10:24:48 UTC] User ID: 6
+[12-Jun-2025 10:24:48 UTC] Query: jan
+[12-Jun-2025 10:24:48 UTC] Friends table exists, getting exclude IDs
+[12-Jun-2025 10:24:48 UTC] Found friend IDs: [2]
+[12-Jun-2025 10:24:48 UTC] Final exclude IDs: [6,2]
+[12-Jun-2025 10:24:48 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?,?) LIMIT 10
+[12-Jun-2025 10:24:48 UTC] Final params: ["%jan%","%jan%","%jan%",6,2]
+[12-Jun-2025 10:24:48 UTC] Param count: 5
+[12-Jun-2025 10:24:48 UTC] Found users: 1
+[12-Jun-2025 10:24:48 UTC] === SEARCH USERS DEBUG END ===
+[12-Jun-2025 10:24:51 UTC] === CHAT API STARTED === Action: add_friend Query: none
+[12-Jun-2025 10:24:51 UTC] === ADD FRIEND DEBUG ===
+[12-Jun-2025 10:24:51 UTC] Current user ID: 6
+[12-Jun-2025 10:24:51 UTC] Friend ID to add: 3
+[12-Jun-2025 10:24:51 UTC] Raw input data: {"user_id":3}
+[12-Jun-2025 10:24:51 UTC] Check SQL: SELECT * FROM friends WHERE 
+                     (user_id = ? AND friend_id = ?) OR 
+                     (user_id = ? AND friend_id = ?)
+[12-Jun-2025 10:24:51 UTC] Check params: [6,3,3,6]
+[12-Jun-2025 10:24:51 UTC] Insert SQL: INSERT INTO friends (user_id, friend_id, status, requested_at, accepted_at) 
+                      VALUES (?, ?, 'accepted', NOW(), NOW())
+[12-Jun-2025 10:24:51 UTC] Insert params: [6,3]
+[12-Jun-2025 10:24:51 UTC] Friend added successfully
+[12-Jun-2025 10:24:51 UTC] === CHAT API STARTED === Action: get_friends Query: none
