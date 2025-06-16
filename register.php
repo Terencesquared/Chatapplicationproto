@@ -398,29 +398,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Password strength check
-        passwordInput.addEventListener('input', () => {
-            const val = passwordInput.value;
-            let strength = 0;
+       passwordInput.addEventListener('input', () => {
+    const val = passwordInput.value;
+    let strength = 0;
 
-            if (val.length >= 6) strength++;
-            if (/[A-Z]/.test(val)) strength++;
-            if (/[0-9]/.test(val)) strength++;
-            if (/[^A-Za-z0-9]/.test(val)) strength++;
+    if (val.length >= 6) strength++;
+    if (/[A-Z]/.test(val)) strength++;
+    if (/[0-9]/.test(val)) strength++;
+    if (/[^A-Za-z0-9]/.test(val)) strength++;
 
-            strengthBar.className = 'password-strength-bar';
+    // Remove all strength classes
+    strengthBar.className = 'password-strength-bar';
+    strengthBar.style.width = '0%';
 
-            if (strength === 0) {
-                strengthBar.style.width = '0%';
-            } else if (strength === 1) {
-                strengthBar.classList.add('strength-weak');
-            } else if (strength === 2) {
-                strengthBar.classList.add('strength-fair');
-            } else if (strength === 3) {
-                strengthBar.classList.add('strength-good');
-            } else {
-                strengthBar.classList.add('strength-strong');
-            }
-        });
+    if (strength === 0) {
+        strengthBar.style.width = '0%';
+    } else if (strength === 1) {
+        strengthBar.classList.add('strength-weak');
+        strengthBar.style.width = '25%';
+    } else if (strength === 2) {
+        strengthBar.classList.add('strength-fair');
+        strengthBar.style.width = '50%';
+    } else if (strength === 3) {
+        strengthBar.classList.add('strength-good');
+        strengthBar.style.width = '75%';
+    } else {
+        strengthBar.classList.add('strength-strong');
+        strengthBar.style.width = '100%';
+    }
+});
+    
 
         // Form submit handler for AJAX (optional - form will work with regular POST too)
         registerForm.addEventListener('submit', function (e) {
