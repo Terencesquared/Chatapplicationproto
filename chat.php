@@ -1171,6 +1171,7 @@ document.getElementById('chat-form').addEventListener('submit', async function(e
 });
 //this is where change has been put
 // Show Friends Modal
+
 // Add event listener for inbox sidebar button
 document.querySelector('.sidebar-item[data-section="inbox"]').addEventListener('click', function() {
     // Hide chat interface and show rooms list
@@ -1185,6 +1186,14 @@ document.querySelector('.sidebar-item[data-section="inbox"]').addEventListener('
     // Remove active class from all room items
     document.querySelectorAll('.room-item').forEach(item => item.classList.remove('active'));
     // Make inbox button active
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    this.classList.add('active');
+});
+// Add event listener for friends sidebar button
+document.querySelector('.sidebar-item[data-section="friends"]').addEventListener('click', function() {
+    document.getElementById('friends-modal').style.display = 'flex';
+    loadFriends();
+    document.querySelector('.right-sidebar').style.display = 'none';
     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
     this.classList.add('active');
 });
@@ -1224,6 +1233,18 @@ async function loadFriends() {
     } catch (e) {
         listDiv.innerHTML = `<div class="error">Failed to load friends</div>`;
     }
+}
+
+// Open chat with friend (optional: open DM chat)
+function openChatWithFriend(friend) {
+    // Example: open a DM chat with this friend
+    selectRoom({
+        id: 'dm_' + friend.id,
+        name: friend.full_name || friend.username,
+        type: 'dm',
+        friend_id: friend.id
+    });
+    document.getElementById('friends-modal').style.display = 'none';
 }
 
 // Add Friend Modal
