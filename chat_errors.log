@@ -339,3 +339,269 @@
 [12-Jun-2025 10:24:51 UTC] Insert params: [6,3]
 [12-Jun-2025 10:24:51 UTC] Friend added successfully
 [12-Jun-2025 10:24:51 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 06:37:29 UTC] === CHAT API STARTED === Action: none Query: none
+[13-Jun-2025 06:37:51 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 06:37:51 UTC] Getting rooms for user ID: 6
+[13-Jun-2025 06:37:51 UTC] Found 4 rooms
+[13-Jun-2025 06:39:23 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 06:39:26 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 06:39:49 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 06:39:54 UTC] === CHAT API STARTED === Action: get_account Query: none
+[13-Jun-2025 06:41:29 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 06:43:18 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 06:43:18 UTC] Getting rooms for user ID: 8
+[13-Jun-2025 06:43:18 UTC] Found 4 rooms
+[13-Jun-2025 06:43:23 UTC] === CHAT API STARTED === Action: get_account Query: none
+[13-Jun-2025 06:43:28 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 06:43:46 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 06:43:46 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 06:43:51 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 06:43:51 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 06:43:54 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 06:43:54 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 06:43:57 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 06:43:57 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 07:24:38 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 07:24:45 UTC] === CHAT API STARTED === Action: search_users Query: j
+[13-Jun-2025 07:24:45 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 07:24:45 UTC] User ID: 8
+[13-Jun-2025 07:24:45 UTC] Query: j
+[13-Jun-2025 07:24:45 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 07:24:45 UTC] Found friend IDs: []
+[13-Jun-2025 07:24:45 UTC] Final exclude IDs: [8]
+[13-Jun-2025 07:24:45 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[13-Jun-2025 07:24:45 UTC] Final params: ["%j%","%j%","%j%",8]
+[13-Jun-2025 07:24:45 UTC] Param count: 4
+[13-Jun-2025 07:24:45 UTC] Found users: 3
+[13-Jun-2025 07:24:45 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 07:24:45 UTC] === CHAT API STARTED === Action: search_users Query: ja
+[13-Jun-2025 07:24:45 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 07:24:45 UTC] User ID: 8
+[13-Jun-2025 07:24:45 UTC] Query: ja
+[13-Jun-2025 07:24:45 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 07:24:45 UTC] Found friend IDs: []
+[13-Jun-2025 07:24:45 UTC] Final exclude IDs: [8]
+[13-Jun-2025 07:24:45 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[13-Jun-2025 07:24:45 UTC] Final params: ["%ja%","%ja%","%ja%",8]
+[13-Jun-2025 07:24:45 UTC] Param count: 4
+[13-Jun-2025 07:24:45 UTC] Found users: 1
+[13-Jun-2025 07:24:45 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 07:24:45 UTC] === CHAT API STARTED === Action: search_users Query: jan
+[13-Jun-2025 07:24:45 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 07:24:45 UTC] User ID: 8
+[13-Jun-2025 07:24:45 UTC] Query: jan
+[13-Jun-2025 07:24:45 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 07:24:45 UTC] Found friend IDs: []
+[13-Jun-2025 07:24:45 UTC] Final exclude IDs: [8]
+[13-Jun-2025 07:24:45 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[13-Jun-2025 07:24:45 UTC] Final params: ["%jan%","%jan%","%jan%",8]
+[13-Jun-2025 07:24:45 UTC] Param count: 4
+[13-Jun-2025 07:24:45 UTC] Found users: 1
+[13-Jun-2025 07:24:45 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 07:24:46 UTC] === CHAT API STARTED === Action: search_users Query: ja
+[13-Jun-2025 07:24:46 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 07:24:46 UTC] User ID: 8
+[13-Jun-2025 07:24:46 UTC] Query: ja
+[13-Jun-2025 07:24:46 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 07:24:46 UTC] Found friend IDs: []
+[13-Jun-2025 07:24:46 UTC] Final exclude IDs: [8]
+[13-Jun-2025 07:24:46 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[13-Jun-2025 07:24:46 UTC] Final params: ["%ja%","%ja%","%ja%",8]
+[13-Jun-2025 07:24:46 UTC] Param count: 4
+[13-Jun-2025 07:24:46 UTC] Found users: 1
+[13-Jun-2025 07:24:46 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 07:24:46 UTC] === CHAT API STARTED === Action: search_users Query: j
+[13-Jun-2025 07:24:46 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 07:24:46 UTC] User ID: 8
+[13-Jun-2025 07:24:46 UTC] Query: j
+[13-Jun-2025 07:24:46 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 07:24:46 UTC] Found friend IDs: []
+[13-Jun-2025 07:24:46 UTC] Final exclude IDs: [8]
+[13-Jun-2025 07:24:46 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?) LIMIT 10
+[13-Jun-2025 07:24:46 UTC] Final params: ["%j%","%j%","%j%",8]
+[13-Jun-2025 07:24:46 UTC] Param count: 4
+[13-Jun-2025 07:24:46 UTC] Found users: 3
+[13-Jun-2025 07:24:46 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 07:25:02 UTC] === CHAT API STARTED === Action: add_friend Query: none
+[13-Jun-2025 07:25:02 UTC] === ADD FRIEND DEBUG ===
+[13-Jun-2025 07:25:02 UTC] Current user ID: 8
+[13-Jun-2025 07:25:02 UTC] Friend ID to add: 2
+[13-Jun-2025 07:25:02 UTC] Raw input data: {"user_id":2}
+[13-Jun-2025 07:25:02 UTC] Check SQL: SELECT * FROM friends WHERE 
+                     (user_id = ? AND friend_id = ?) OR 
+                     (user_id = ? AND friend_id = ?)
+[13-Jun-2025 07:25:02 UTC] Check params: [8,2,2,8]
+[13-Jun-2025 07:25:02 UTC] Insert SQL: INSERT INTO friends (user_id, friend_id, status, requested_at, accepted_at) 
+                      VALUES (?, ?, 'accepted', NOW(), NOW())
+[13-Jun-2025 07:25:02 UTC] Insert params: [8,2]
+[13-Jun-2025 07:25:02 UTC] Friend added successfully
+[13-Jun-2025 07:25:02 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 07:25:26 UTC] === CHAT API STARTED === Action: logout Query: none
+[13-Jun-2025 10:19:34 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 10:19:34 UTC] Getting rooms for user ID: 6
+[13-Jun-2025 10:19:34 UTC] Found 1 rooms for user 6
+[13-Jun-2025 10:19:34 UTC] Formatted 1 rooms for user 6
+[13-Jun-2025 10:20:12 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 10:20:19 UTC] === CHAT API STARTED === Action: search_users Query: l
+[13-Jun-2025 10:20:19 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 10:20:19 UTC] User ID: 6
+[13-Jun-2025 10:20:19 UTC] Query: l
+[13-Jun-2025 10:20:19 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 10:20:19 UTC] Found friend IDs: [2,3]
+[13-Jun-2025 10:20:19 UTC] Final exclude IDs: [6,2,3]
+[13-Jun-2025 10:20:19 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?,?,?) LIMIT 10
+[13-Jun-2025 10:20:19 UTC] Final params: ["%l%","%l%","%l%",6,2,3]
+[13-Jun-2025 10:20:19 UTC] Param count: 6
+[13-Jun-2025 10:20:19 UTC] Found users: 4
+[13-Jun-2025 10:20:19 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 10:20:20 UTC] === CHAT API STARTED === Action: search_users Query: li
+[13-Jun-2025 10:20:20 UTC] === SEARCH USERS DEBUG START ===
+[13-Jun-2025 10:20:20 UTC] User ID: 6
+[13-Jun-2025 10:20:20 UTC] Query: li
+[13-Jun-2025 10:20:20 UTC] Friends table exists, getting exclude IDs
+[13-Jun-2025 10:20:20 UTC] Found friend IDs: [2,3]
+[13-Jun-2025 10:20:20 UTC] Final exclude IDs: [6,2,3]
+[13-Jun-2025 10:20:20 UTC] Final SQL: SELECT u.id, u.username, u.full_name, u.email, u.avatar_url 
+                FROM users u 
+                WHERE (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) AND u.id NOT IN (?,?,?) LIMIT 10
+[13-Jun-2025 10:20:20 UTC] Final params: ["%li%","%li%","%li%",6,2,3]
+[13-Jun-2025 10:20:20 UTC] Param count: 6
+[13-Jun-2025 10:20:20 UTC] Found users: 1
+[13-Jun-2025 10:20:20 UTC] === SEARCH USERS DEBUG END ===
+[13-Jun-2025 10:20:34 UTC] === CHAT API STARTED === Action: add_friend Query: none
+[13-Jun-2025 10:20:34 UTC] === ADD FRIEND DEBUG ===
+[13-Jun-2025 10:20:34 UTC] Current user ID: 6
+[13-Jun-2025 10:20:34 UTC] Friend ID to add: 8
+[13-Jun-2025 10:20:34 UTC] Raw input data: {"user_id":8}
+[13-Jun-2025 10:20:34 UTC] Check SQL: SELECT * FROM friends WHERE 
+                     (user_id = ? AND friend_id = ?) OR 
+                     (user_id = ? AND friend_id = ?)
+[13-Jun-2025 10:20:34 UTC] Check params: [6,8,8,6]
+[13-Jun-2025 10:20:34 UTC] Insert SQL: INSERT INTO friends (user_id, friend_id, status, requested_at, accepted_at) 
+                      VALUES (?, ?, 'accepted', NOW(), NOW())
+[13-Jun-2025 10:20:34 UTC] Insert params: [6,8]
+[13-Jun-2025 10:20:34 UTC] Friend added successfully
+[13-Jun-2025 10:20:34 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 10:22:50 UTC] === CHAT API STARTED === Action: logout Query: none
+[13-Jun-2025 10:24:42 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 10:24:42 UTC] Getting rooms for user ID: 6
+[13-Jun-2025 10:24:42 UTC] Found 1 rooms for user 6
+[13-Jun-2025 10:24:42 UTC] Formatted 1 rooms for user 6
+[13-Jun-2025 10:24:45 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 10:24:45 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 10:24:52 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[13-Jun-2025 10:25:39 UTC] === CHAT API STARTED === Action: logout Query: none
+[13-Jun-2025 10:26:35 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 10:26:35 UTC] Getting rooms for user ID: 8
+[13-Jun-2025 10:26:35 UTC] Found 0 rooms for user 8
+[13-Jun-2025 10:26:35 UTC] Formatted 0 rooms for user 8
+[13-Jun-2025 10:26:46 UTC] === CHAT API STARTED === Action: get_account Query: none
+[13-Jun-2025 11:30:38 UTC] === CHAT API STARTED === Action: logout Query: none
+[13-Jun-2025 11:30:48 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 11:31:05 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 11:31:05 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 11:31:12 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 11:31:12 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 11:31:31 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 11:31:31 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 11:31:38 UTC] === CHAT API STARTED === Action: send_message Query: none
+[13-Jun-2025 11:31:38 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 11:42:17 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 11:42:17 UTC] === CHAT API STARTED === Action: get_members Query: none
+[13-Jun-2025 11:42:59 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[13-Jun-2025 11:43:02 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[13-Jun-2025 11:43:02 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:27:32 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 05:27:35 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:27:35 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:41:10 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:41:10 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:44:09 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:44:09 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:48:58 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:48:58 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:49:02 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:49:02 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:51:14 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 05:51:17 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:51:17 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:54:15 UTC] === CHAT API STARTED === Action: get_friends Query: none
+[16-Jun-2025 05:55:02 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:55:02 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:55:08 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 05:55:08 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 05:55:17 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 05:55:17 UTC] API Error: SQLSTATE[HY093]: Invalid parameter number
+[16-Jun-2025 05:55:17 UTC] Stack trace: #0 C:\Users\teren\OneDrive\Documents\Internet Program project\chat_api.php(272): PDOStatement->execute(Array)
+#1 {main}
+[16-Jun-2025 06:05:47 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 06:05:50 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 06:05:50 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 06:05:53 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:05:53 UTC] API Error: SQLSTATE[HY093]: Invalid parameter number
+[16-Jun-2025 06:05:53 UTC] Stack trace: #0 C:\Users\teren\OneDrive\Documents\Internet Program project\chat_api.php(272): PDOStatement->execute(Array)
+#1 {main}
+[16-Jun-2025 06:06:14 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:06:14 UTC] API Error: SQLSTATE[HY093]: Invalid parameter number
+[16-Jun-2025 06:06:14 UTC] Stack trace: #0 C:\Users\teren\OneDrive\Documents\Internet Program project\chat_api.php(272): PDOStatement->execute(Array)
+#1 {main}
+[16-Jun-2025 06:06:20 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 06:06:20 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 06:06:31 UTC] === CHAT API STARTED === Action: send_message Query: none
+[16-Jun-2025 06:06:31 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 06:06:43 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 06:06:43 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 06:13:19 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:13:19 UTC] API Error: SQLSTATE[HY093]: Invalid parameter number
+[16-Jun-2025 06:13:19 UTC] Stack trace: #0 C:\Users\teren\OneDrive\Documents\Internet Program project\chat_api.php(272): PDOStatement->execute(Array)
+#1 {main}
+[16-Jun-2025 06:17:04 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 06:17:06 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:17:11 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:17:13 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:17:16 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:17:29 UTC] === CHAT API STARTED === Action: send_dm_message Query: none
+[16-Jun-2025 06:17:29 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:18:04 UTC] === CHAT API STARTED === Action: logout Query: none
+[16-Jun-2025 06:18:15 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 06:18:17 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:18:28 UTC] === CHAT API STARTED === Action: send_dm_message Query: none
+[16-Jun-2025 06:18:28 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:18:30 UTC] === CHAT API STARTED === Action: logout Query: none
+[16-Jun-2025 06:18:43 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 06:18:45 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:29:44 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:29:47 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 06:29:47 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 06:31:39 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 06:31:42 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 06:31:42 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 09:00:11 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 09:00:13 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:00:15 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 09:00:15 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 09:00:20 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:00:31 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:04:26 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:04:29 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 09:04:29 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 09:04:34 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:04:34 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:04:36 UTC] === CHAT API STARTED === Action: get_rooms Query: none
+[16-Jun-2025 09:04:37 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 09:04:43 UTC] === CHAT API STARTED === Action: get_messages Query: none
+[16-Jun-2025 09:04:43 UTC] === CHAT API STARTED === Action: get_members Query: none
+[16-Jun-2025 09:04:46 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none
+[16-Jun-2025 09:04:54 UTC] === CHAT API STARTED === Action: get_dm_messages Query: none

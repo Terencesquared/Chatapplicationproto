@@ -933,6 +933,8 @@ class Chat {
     <!-- Basic JS -->
     <script>
 let currentRoomId = null;
+let currentRoomType = null;
+let currentFriendId = null;
 
 // Load rooms from backend
 async function loadRooms() {
@@ -972,17 +974,54 @@ async function loadRooms() {
 // Select a room and load messages/members
 async function selectRoom(room) {
     currentRoomId = room.id;
+    currentRoomType = room.type;
+    currentFriendId = room.type === 'dm' ? room.friend_id : null;
     document.getElementById('chat-title').textContent = room.name;
     document.getElementById('chat-interface').style.display = 'flex';
-    document.getElementById('rooms-list').style.display = 'none';
 
     // Highlight selected room
     document.querySelectorAll('.room-item').forEach(item => item.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    await loadMessages();
-    await loadMembers();
+    if (room.type === 'dm') {
+        await loadDmMessages(room.friend_id);
+    } else {
+        await loadMessages();
+        await loadMembers();
+    }
 }
+
+// Load DM messages
+async function loadDmMessages(friendId) {
+    const messagesContainer = document.getElementById('chat-messages');
+    messagesContainer.innerHTML = '<div class="loading">Loading messages...</div>';
+    try {
+        const res = await fetch(`chat_api.php?action=get_dm_messages&friend_id=${friendId}`);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+
+        messagesContainer.innerHTML = '';
+        data.messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message';
+            msgDiv.innerHTML = `
+                <div class="message-avatar">${msg.avatar}</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <div class="message-author">${msg.author}</div>
+                        <div class="message-time">${msg.time}</div>
+                    </div>
+                    <div class="message-text">${msg.text}</div>
+                </div>
+            `;
+            messagesContainer.appendChild(msgDiv);
+        });
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    } catch (e) {
+        messagesContainer.innerHTML = `<div class="error">Failed to load messages: ${e.message}</div>`;
+    }
+}
+
 // Logout button handler
 document.getElementById('logout-btn').addEventListener('click', async function() {
     try {
@@ -1067,17 +1106,33 @@ document.getElementById('chat-form').addEventListener('submit', async function(e
     if (!text || !currentRoomId) return;
     document.getElementById('send-button').disabled = true;
     try {
-        const res = await fetch('chat_api.php?action=send_message', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ room_id: currentRoomId, message: text })
-        });
-        const data = await res.json();
-        if (data.success) {
-            input.value = '';
-            await loadMessages();
+        let res, data;
+        if (currentRoomType === 'dm') {
+            res = await fetch('chat_api.php?action=send_dm_message', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ friend_id: currentFriendId, message: text })
+            });
+            data = await res.json();
+            if (data.success) {
+                input.value = '';
+                await loadDmMessages(currentFriendId);
+            } else {
+                alert(data.message || 'Failed to send message');
+            }
         } else {
-            alert(data.message || 'Failed to send message');
+            res = await fetch('chat_api.php?action=send_message', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ room_id: currentRoomId, message: text })
+            });
+            data = await res.json();
+            if (data.success) {
+                input.value = '';
+                await loadMessages();
+            } else {
+                alert(data.message || 'Failed to send message');
+            }
         }
     } finally {
         document.getElementById('send-button').disabled = false;
@@ -1193,7 +1248,6 @@ async function addFriend(userId, btn) {
         btn.textContent = 'Add';
         alert('Failed to add friend');
     }
-    btn.disabled = false;
 }
 
 // Open chat with friend (you can implement this to open a DM room)

@@ -77,72 +77,61 @@ $action = $_GET['action'] ?? '';
 // Main API logic with comprehensive error handling
 try {
     switch ($action) {
-        case 'get_rooms':
-            $userId = checkAuth();
-            
-            // Debug logging
-            error_log("Getting rooms for user ID: " . $userId);
-            
-            try {
-                // Get rooms directly from database instead of relying on Chat class
-                $db = Database::getInstance()->getConnection();
-                
-                // Get all public rooms and private rooms the user is a member of
-                $query = "SELECT DISTINCT r.*, rp.role,
-                            (SELECT COUNT(*) FROM messages m WHERE m.room_id = r.id) as message_count
-                          FROM chat_rooms r 
-                          LEFT JOIN room_participants rp ON r.id = rp.room_id AND rp.user_id = :user_id
-                          WHERE r.is_private = 0 OR rp.user_id IS NOT NULL
-                          ORDER BY r.created_at DESC";
-                
-                $stmt = $db->prepare($query);
-                $stmt->bindParam(':user_id', $userId);
-                $stmt->execute();
-                $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                
-                error_log("Found " . count($rooms) . " rooms");
-                
-                $formatted = [];
-                foreach ($rooms as $room) {
-                    try {
-                        // Get last message for this room
-                        $msgQuery = "SELECT m.*, u.username, u.full_name 
-                                   FROM messages m 
-                                   JOIN users u ON m.user_id = u.id 
-                                   WHERE m.room_id = :room_id 
-                                   ORDER BY m.created_at DESC 
-                                   LIMIT 1";
-                        
-                        $msgStmt = $db->prepare($msgQuery);
-                        $msgStmt->bindParam(':room_id', $room['id']);
-                        $msgStmt->execute();
-                        $lastMsg = $msgStmt->fetch(PDO::FETCH_ASSOC);
-                        
-                        $formatted[] = [
-                            'id' => (int)$room['id'],
-                            'name' => $room['name'] ?? 'Unnamed Room',
-                            'description' => $room['description'] ?? '',
-                            'avatar' => strtoupper(($room['name'] ?? 'U')[0]),
-                            'lastMessage' => $lastMsg ? $lastMsg['message_text'] : 'No messages yet',
-                            'lastTime' => $lastMsg ? date('H:i', strtotime($lastMsg['created_at'])) : '',
-                            'messageCount' => (int)($room['message_count'] ?? 0),
-                            'isPrivate' => (bool)($room['is_private'] ?? false),
-                            'role' => $room['role'] ?? 'member'
-                        ];
-                    } catch (Exception $e) {
-                        error_log("Error formatting room " . $room['id'] . ": " . $e->getMessage());
-                        // Skip this room but continue with others
-                        continue;
-                    }
-                }
-                
-                sendSuccess(['rooms' => $formatted]);
-                
-            } catch (Exception $e) {
-                error_log("Error getting user rooms: " . $e->getMessage());
-                sendError('Failed to load rooms: ' . $e->getMessage());
-            }
-            break;
+      
+case 'get_rooms':
+    $userId = checkAuth();
+    $db = Database::getInstance()->getConnection();
+
+    // 1. Get group rooms
+    $rooms = [];
+    $stmt = $db->prepare("SELECT r.id, r.name, r.description, r.created_at
+                          FROM chat_rooms r
+                          JOIN room_participants rp ON rp.room_id = r.id
+                          WHERE rp.user_id = ?");
+    $stmt->execute([$userId]);
+    $groupRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($groupRooms as $room) {
+        $rooms[] = [
+            'id' => $room['id'],
+            'name' => $room['name'],
+            'avatar' => strtoupper(substr($room['name'], 0, 2)),
+            'type' => 'group',
+            'lastMessage' => '', // You can add last message logic here
+            'lastTime' => '',    // And last message time if you want
+        ];
+    }
+
+    // 2. Get friends as DM rooms
+    $friendSql = "SELECT u.id, u.username, u.full_name, u.email, u.avatar_url
+                  FROM users u
+                  INNER JOIN friends f ON (
+                      (f.user_id = :user_id1 AND f.friend_id = u.id)
+                      OR
+                      (f.friend_id = :user_id2 AND f.user_id = u.id)
+                  )
+                  WHERE f.status = 'accepted' AND u.id != :user_id3";
+    $stmt = $db->prepare($friendSql);
+    $stmt->bindValue(':user_id1', $userId, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id2', $userId, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id3', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    $friends = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($friends as $friend) {
+        $rooms[] = [
+            'id' => 'dm_' . $friend['id'], // Use a string to distinguish DMs
+            'name' => $friend['full_name'] ?: $friend['username'],
+            'avatar' => $friend['avatar_url'] ?: strtoupper(substr($friend['full_name'] ?: $friend['username'], 0, 2)),
+            'type' => 'dm',
+            'friend_id' => $friend['id'],
+            'lastMessage' => '', // You can add last message logic here
+            'lastTime' => '',
+        ];
+    }
+
+    sendSuccess(['rooms' => $rooms]);
+    break;
 
         case 'create_room':
             if ($method !== 'POST') sendError('Method not allowed', 405);
@@ -267,6 +256,50 @@ try {
         // Add this case to your existing chat_api.php switch statement
         
 
+
+case 'get_dm_messages':
+    $userId = checkAuth();
+    $friendId = intval($_GET['friend_id'] ?? 0);
+    if (!$friendId) sendError('No friend specified');
+
+    $db = Database::getInstance()->getConnection();
+    
+    // Fix: Use positional parameters instead of named parameters
+    $stmt = $db->prepare("SELECT m.*, u.username, u.full_name
+                          FROM direct_messages m
+                          JOIN users u ON m.user_id = u.id
+                          WHERE (m.user_id = ? AND m.friend_id = ?)
+                             OR (m.user_id = ? AND m.friend_id = ?)
+                          ORDER BY m.created_at ASC");
+    $stmt->execute([$userId, $friendId, $friendId, $userId]);
+    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $formatted = array_map(function($m) {
+        return [
+            'author' => $m['full_name'] ?: $m['username'],
+            'avatar' => '', // Add avatar logic if needed
+            'time' => date('H:i A', strtotime($m['created_at'])),
+            'text' => $m['message_text'],
+        ];
+    }, $messages);
+
+    sendSuccess(['messages' => $formatted]);
+    break;
+
+case 'send_dm_message':
+    $userId = checkAuth();
+    $data = json_decode(file_get_contents('php://input'), true);
+    $friendId = intval($data['friend_id'] ?? 0);
+    $message = trim($data['message'] ?? '');
+    if (!$friendId || !$message) sendError('Missing data');
+
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("INSERT INTO direct_messages (user_id, friend_id, message_text, created_at)
+                          VALUES (?, ?, ?, NOW())");
+    $stmt->execute([$userId, $friendId, $message]);
+    sendSuccess(['success' => true]);
+    break;
+
 case 'get_friends':
     $userId = checkAuth();
     try {
@@ -302,7 +335,22 @@ case 'get_friends':
     }
     break;
 
-
+case 'add_member_to_group':
+    $userId = checkAuth();
+    $data = json_decode(file_get_contents('php://input'), true);
+    $roomId = intval($data['room_id'] ?? 0);
+    $friendId = intval($data['user_id'] ?? 0);
+    if (!$roomId || !$friendId) sendError('Missing data');
+    $db = Database::getInstance()->getConnection();
+    // Check if already a member
+    $stmt = $db->prepare("SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?");
+    $stmt->execute([$roomId, $friendId]);
+    if ($stmt->fetch()) sendError('User already in group');
+    // Add to group
+    $stmt = $db->prepare("INSERT INTO room_participants (room_id, user_id) VALUES (?, ?)");
+    $stmt->execute([$roomId, $friendId]);
+    sendSuccess(['success' => true]);
+    break;
 
 
 case 'search_users':

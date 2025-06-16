@@ -453,6 +453,19 @@
         .btn:hover {
             opacity: 0.9;
         }
+
+        /* Loading and Error States */
+        .loading {
+            text-align: center;
+            padding: 10px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -489,10 +502,13 @@
 
         <!-- Right Sidebar - Members -->
         <div class="right-sidebar">
-            <div class="members-header">
-                <div class="members-title">Members</div>
-                <div class="members-count" id="members-count">0 members</div>
-            </div>
+            <div class="members-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <div class="members-title">Members</div>
+        <div class="members-count" id="members-count">0 members</div>
+    </div>
+    <button class="btn btn-primary" id="add-member-btn" style="font-size: 13px; padding: 6px 14px;">+ Add</button>
+</div>
             <div class="members-list" id="members-list">
                 <div style="padding: 20px; text-align: center; color: #7f8c8d;">
                     Select a room to view members
@@ -535,6 +551,19 @@
                     <button type="submit" class="btn btn-primary">Create Group</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div class="modal" id="add-member-modal">
+        <div class="modal-content">
+            <div class="modal-header">Add Members to Group</div>
+            <div id="add-member-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+                <!-- Friends will be listed here -->
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeAddMemberModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -631,6 +660,12 @@
                     closeNewGroupModal();
                 }
             });
+
+            // Show Add Member Modal
+            document.getElementById('add-member-btn').addEventListener('click', function() {
+    document.getElementById('add-member-modal').style.display = 'flex';
+    loadAddableFriends();
+});
         }
 
         // Load rooms into the main area
@@ -826,13 +861,83 @@
             document.getElementById('create-group-form').reset();
         }
 
+        // Close add member modal
+        function closeAddMemberModal() {
+    document.getElementById('add-member-modal').style.display = 'none';
+}
+
         // Show account options
         function showAccountOptions() {
             alert('Account options: Profile, Settings, Logout, etc.');
         }
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', init);
+        // Load friends not already in the group
+async function loadAddableFriends() {
+    const listDiv = document.getElementById('add-member-list');
+    listDiv.innerHTML = '<div class="loading">Loading friends...</div>';
+    try {
+        // Fetch your friends
+        const res = await fetch('chat_api.php?action=get_friends');
+        const data = await res.json();
+        if (data.success && data.friends.length > 0) {
+            // Optionally, filter out friends already in the group
+            // For demo, just show all friends:
+            listDiv.innerHTML = '';
+            data.friends.forEach(friend => {
+                const friendDiv = document.createElement('div');
+                friendDiv.className = 'account-info-item';
+                friendDiv.style.display = 'flex';
+                friendDiv.style.justifyContent = 'space-between';
+                friendDiv.style.alignItems = 'center';
+                friendDiv.style.marginBottom = '8px';
+                friendDiv.innerHTML = `
+                    <span>
+                        <i class="icon">👤</i> ${friend.full_name || friend.username}
+                    </span>
+                    <button class="btn btn-primary" style="font-size:12px; padding:4px 10px;" onclick="addMemberToGroup(${friend.id}, this)">Add</button>
+                `;
+                listDiv.appendChild(friendDiv);
+            });
+        } else {
+            listDiv.innerHTML = '<div class="loading">No friends to add.</div>';
+        }
+    } catch (e) {
+        listDiv.innerHTML = '<div class="error">Failed to load friends</div>';
+    }
+}
+
+// Add member to group (call your backend)
+function addMemberToGroup(friendId, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Adding...';
+    // TODO: Replace with your API call to add member to group
+    // Example:
+    fetch('chat_api.php?action=add_member_to_group', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ room_id: currentRoomId, user_id: friendId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.textContent = 'Added!';
+            // Optionally refresh members list
+            loadMembers();
+        } else {
+            btn.textContent = 'Add';
+            alert(data.message || 'Failed to add member');
+        }
+        btn.disabled = false;
+    })
+    .catch(() => {
+        btn.textContent = 'Add';
+        btn.disabled = false;
+        alert('Failed to add member');
+    });
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
