@@ -838,11 +838,14 @@ class Chat {
         </div>
 
         <!-- Right Sidebar - Members -->
-        <div class="right-sidebar">
-            <div class="members-header">
-                <div class="members-title">Members</div>
-                <div class="members-count" id="members-count">0 members</div>
-            </div>
+        <div class="right-sidebar" style="display:none;">
+           <div class="members-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <div class="members-title">Members</div>
+        <div class="members-count" id="members-count">0 members</div>
+    </div>
+    <button class="btn btn-primary" id="add-member-btn" style="font-size: 13px; padding: 6px 14px;">+ Add</button>
+</div>
             <div class="members-list" id="members-list">
                 <div style="padding: 20px; text-align: center; color: #7f8c8d;">
                     Select a room to view members
@@ -918,6 +921,18 @@ class Chat {
         </div>
     </div>
 </div>
+<!-- Add Member Modal -->
+<div class="modal" id="add-member-modal">
+    <div class="modal-content">
+        <div class="modal-header">Add Members to Group</div>
+        <div id="add-member-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+            <!-- Friends will be listed here -->
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-secondary" onclick="closeAddMemberModal()">Cancel</button>
+        </div>
+    </div>
+</div>
 <!-- Add Friend Modal -->
 <div class="modal" id="add-friend-modal">
     <div class="modal-content">
@@ -978,10 +993,26 @@ async function selectRoom(room) {
     currentFriendId = room.type === 'dm' ? room.friend_id : null;
     document.getElementById('chat-title').textContent = room.name;
     document.getElementById('chat-interface').style.display = 'flex';
+    // Show/hide right sidebar based on room type
+    const rightSidebar = document.querySelector('.right-sidebar');
+    const chatInterface = document.getElementById('chat-interface');
+    if (room.type === 'group') {
+        rightSidebar.style.display = 'flex';
+        chatInterface.style.right = '250px';
+        await loadMembers();
+    } else {
+        rightSidebar.style.display = 'none';
+        chatInterface.style.right = '0';
+    }
 
     // Highlight selected room
     document.querySelectorAll('.room-item').forEach(item => item.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    const roomItems = document.querySelectorAll('.room-item');
+    roomItems.forEach(item => {
+        if (item.querySelector('.room-name').textContent === room.name) {
+            item.classList.add('active');
+        }
+    });
 
     if (room.type === 'dm') {
         await loadDmMessages(room.friend_id);
@@ -1138,13 +1169,31 @@ document.getElementById('chat-form').addEventListener('submit', async function(e
         document.getElementById('send-button').disabled = false;
     }
 });
+//this is where change has been put
 // Show Friends Modal
-document.querySelector('.sidebar-item[data-section="friends"]').addEventListener('click', function() {
-    document.getElementById('friends-modal').style.display = 'flex';
-    loadFriends();
+// Add event listener for inbox sidebar button
+document.querySelector('.sidebar-item[data-section="inbox"]').addEventListener('click', function() {
+    // Hide chat interface and show rooms list
+    document.getElementById('chat-interface').style.display = 'none';
+    document.getElementById('rooms-list').style.display = 'block';
+    // Hide the right sidebar when in inbox
+    document.querySelector('.right-sidebar').style.display = 'none';
+    // Clear the active room
+    currentRoomId = null;
+    currentRoomType = null;
+    currentFriendId = null;
+    // Remove active class from all room items
+    document.querySelectorAll('.room-item').forEach(item => item.classList.remove('active'));
+    // Make inbox button active
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    this.classList.add('active');
 });
 function closeFriendsModal() {
     document.getElementById('friends-modal').style.display = 'none';
+    // If no room is selected, hide right sidebar
+    if (!currentRoomId || currentRoomType !== 'group') {
+        document.querySelector('.right-sidebar').style.display = 'none';
+    }
 }
 
 // Load Friends List
@@ -1223,6 +1272,79 @@ document.getElementById('friend-search-input').addEventListener('input', async f
         resultsDiv.innerHTML = `<div class="error">Failed to search users</div>`;
     }
 });
+// Show Add Member Modal
+document.getElementById('add-member-btn').addEventListener('click', function() {
+    document.getElementById('add-member-modal').style.display = 'flex';
+    loadAddableFriends();
+});
+function closeAddMemberModal() {
+    document.getElementById('add-member-modal').style.display = 'none';
+}
+
+// Load friends not already in the group
+async function loadAddableFriends() {
+    const listDiv = document.getElementById('add-member-list');
+    listDiv.innerHTML = '<div class="loading">Loading friends...</div>';
+    try {
+        // Fetch your friends
+        const res = await fetch('chat_api.php?action=get_friends');
+        const data = await res.json();
+        if (data.success && data.friends.length > 0) {
+            // Optionally, filter out friends already in the group
+            // For demo, just show all friends:
+            listDiv.innerHTML = '';
+            data.friends.forEach(friend => {
+                const friendDiv = document.createElement('div');
+                friendDiv.className = 'account-info-item';
+                friendDiv.style.display = 'flex';
+                friendDiv.style.justifyContent = 'space-between';
+                friendDiv.style.alignItems = 'center';
+                friendDiv.style.marginBottom = '8px';
+                friendDiv.innerHTML = `
+                    <span>
+                        <i class="icon">👤</i> ${friend.full_name || friend.username}
+                    </span>
+                    <button class="btn btn-primary" style="font-size:12px; padding:4px 10px;" onclick="addMemberToGroup(${friend.id}, this)">Add</button>
+                `;
+                listDiv.appendChild(friendDiv);
+            });
+        } else {
+            listDiv.innerHTML = '<div class="loading">No friends to add.</div>';
+        }
+    } catch (e) {
+        listDiv.innerHTML = '<div class="error">Failed to load friends</div>';
+    }
+}
+
+// Add member to group (call your backend)
+function addMemberToGroup(friendId, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Adding...';
+    // TODO: Replace with your API call to add member to group
+    // Example:
+    fetch('chat_api.php?action=add_member_to_group', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ room_id: currentRoomId, user_id: friendId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.textContent = 'Added!';
+            // Optionally refresh members list
+            loadMembers();
+        } else {
+            btn.textContent = 'Add';
+            alert(data.message || 'Failed to add member');
+        }
+        btn.disabled = false;
+    })
+    .catch(() => {
+        btn.textContent = 'Add';
+        btn.disabled = false;
+        alert('Failed to add member');
+    });
+}
 
 
 
@@ -1286,6 +1408,10 @@ function showAccountOptions() {
 }
 function closeAccountModal() {
     document.getElementById('account-modal').style.display = 'none';
+    // If no room is selected, hide right sidebar
+    if (!currentRoomId || currentRoomType !== 'group') {
+        document.querySelector('.right-sidebar').style.display = 'none';
+    }
 }
 // Enhanced function to load account details
 async function loadAccountDetails() {
@@ -1424,11 +1550,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     //function to add functionality to the back to inbox button
-    const backButton = document.getElementById('back-to-inbox');
+   const backButton = document.getElementById('back-to-inbox');
 if (backButton) {
     backButton.addEventListener('click', function() {
         document.getElementById('chat-interface').style.display = 'none';
         document.getElementById('rooms-list').style.display = 'block';
+        // Hide the right sidebar when going back to inbox
+        document.querySelector('.right-sidebar').style.display = 'none';
+        // Clear the active room
+        currentRoomId = null;
+        currentRoomType = null;
+        currentFriendId = null;
+        // Remove active class from all room items
+        document.querySelectorAll('.room-item').forEach(item => item.classList.remove('active'));
     });
 }
 
