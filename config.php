@@ -437,4 +437,4 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Uncomment the line below to initialize the database on first run
- initializeDatabase();
+ //initializeDatabase();
