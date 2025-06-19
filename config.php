@@ -3,6 +3,9 @@
  * Database Configuration File
  * Contains database connection settings and security configurations
  */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Environment-based Database Configuration
 if (isset($_SERVER['DATABASE_URL'])) {
