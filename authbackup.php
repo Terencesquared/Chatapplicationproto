@@ -2,9 +2,6 @@
 session_start(); // <-- IMPORTANT: Start session at the very top
 require_once 'config.php';
 
-// Set JSON response header early
-header('Content-Type: application/json');
-
 // Initialize database with sample data
 function initializeDatabase() {
     $db = Database::getInstance()->getConnection();
@@ -135,19 +132,13 @@ function isLoggedIn() {
 }
 
 // Initialize database
-try {
-    initializeDatabase();
-} catch (Exception $e) {
-    error_log("Database initialization error: " . $e->getMessage());
-    echo json_encode([
-        'success' => false,
-        'message' => 'Database initialization failed'
-    ]);
-    exit;
-}
+initializeDatabase();
 
 // Handle action
 $action = $_GET['action'] ?? ($_POST['action'] ?? 'login');
+
+// Set JSON response header
+header('Content-Type: application/json');
 
 switch ($action) {
     case 'check':
@@ -212,12 +203,11 @@ switch ($action) {
         break;
 
     case 'logout':
+         session_start();
         session_destroy();
         setcookie(session_name(), '', time() - 3600, '/'); // Clear session cookie
-        echo json_encode([
-            'success' => true,
-            'message' => 'Logged out successfully'
-        ]);
+        echo json_encode(['success' => true]);
+    
         break;
 
     default:
@@ -227,7 +217,11 @@ switch ($action) {
         ]);
         break;
 }
-
-// Ensure no additional output
-exit;
-?>
+// In auth.php, add this logout action
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    session_start();
+    session_destroy();
+    setcookie(session_name(), '', time() - 3600, '/'); // Clear session cookie
+    echo json_encode(['success' => true]);
+    exit;
+}
