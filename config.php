@@ -4,12 +4,27 @@
  * Contains database connection settings and security configurations
  */
 
-// Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'chat_app');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+// Environment-based Database Configuration
+if (isset($_SERVER['DATABASE_URL'])) {
+    // Production - Render PostgreSQL
+    $db_url = parse_url($_SERVER['DATABASE_URL']);
+    define('DB_HOST', $db_url['host']);
+    define('DB_NAME', ltrim($db_url['path'], '/'));
+    define('DB_USER', $db_url['user']);
+    define('DB_PASS', $db_url['pass']);
+    define('DB_PORT', isset($db_url['port']) ? $db_url['port'] : 5432);
+    define('DB_CHARSET', 'utf8');
+    define('DB_TYPE', 'pgsql'); // PostgreSQL for production
+} else {
+    // Local development - MySQL
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'chat_app');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_PORT', 3306);
+    define('DB_CHARSET', 'utf8mb4');
+    define('DB_TYPE', 'mysql'); // MySQL for local
+}
 
 // Security Configuration
 define('SECRET_KEY', 'your-secret-key-here-change-in-production');
@@ -18,9 +33,10 @@ define('CSRF_TOKEN_LIFETIME', 3600); // 1 hour
 
 // Application Configuration
 define('APP_NAME', 'ChatApp');
-define('BASE_URL', 'http://localhost/chatapp');
+define('BASE_URL', 'https://bongabonga-com.onrender.com');
 define('UPLOAD_DIR', 'uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
+
 
 // Database Connection Class
 class Database {
@@ -96,6 +112,133 @@ class Database {
      * Prevent unserialization of the instance
      */
     public function __wakeup() {}
+}
+
+/**
+ * Initialize database tables
+ * Creates all required tables for the chat application
+ */
+function initializeDatabase() {
+    try {
+        $db = Database::getInstance()->getConnection();
+        
+        // Enable foreign key checks
+        $db->exec("SET FOREIGN_KEY_CHECKS = 1");
+        
+        echo "Creating users table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `users` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `username` varchar(50) NOT NULL,
+                `full_name` varchar(100) DEFAULT NULL,
+                `email` varchar(100) NOT NULL,
+                `password_hash` varchar(255) NOT NULL,
+                `avatar_url` varchar(255) DEFAULT NULL,
+                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `username` (`username`),
+                UNIQUE KEY `email` (`email`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "Creating chat_rooms table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `chat_rooms` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `name` varchar(100) NOT NULL,
+                `description` text DEFAULT NULL,
+                `is_private` tinyint(1) DEFAULT 0,
+                `created_by` int(11) NOT NULL,
+                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `name` (`name`),
+                KEY `created_by` (`created_by`),
+                CONSTRAINT `chat_rooms_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "Creating messages table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `messages` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `room_id` int(11) NOT NULL,
+                `user_id` int(11) NOT NULL,
+                `message_text` text NOT NULL,
+                `message_type` enum('text','image','file') DEFAULT 'text',
+                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                PRIMARY KEY (`id`),
+                KEY `room_id` (`room_id`),
+                KEY `user_id` (`user_id`),
+                CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
+                CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "Creating room_participants table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `room_participants` (
+                `room_id` int(11) NOT NULL,
+                `user_id` int(11) NOT NULL,
+                `role` enum('admin','member') DEFAULT 'member',
+                `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                PRIMARY KEY (`room_id`,`user_id`),
+                KEY `user_id` (`user_id`),
+                CONSTRAINT `room_participants_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
+                CONSTRAINT `room_participants_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "Creating room_members table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `room_members` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `room_id` int(11) NOT NULL,
+                `user_id` int(11) NOT NULL,
+                `role` enum('member','admin','owner') NOT NULL DEFAULT 'member',
+                `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
+                `is_active` tinyint(1) NOT NULL DEFAULT 1,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `unique_room_user` (`room_id`,`user_id`),
+                KEY `fk_user` (`user_id`),
+                CONSTRAINT `fk_room` FOREIGN KEY (`room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
+                CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "Creating friends table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `friends` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `user_id` int(11) NOT NULL,
+                `friend_id` int(11) NOT NULL,
+                `status` enum('pending','accepted','declined','blocked') DEFAULT 'pending',
+                `requested_at` datetime DEFAULT current_timestamp(),
+                `accepted_at` datetime DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `unique_friendship` (`user_id`,`friend_id`),
+                KEY `friend_id` (`friend_id`),
+                CONSTRAINT `friends_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+                CONSTRAINT `friends_ibfk_2` FOREIGN KEY (`friend_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "Creating direct_messages table...\n";
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS `direct_messages` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `user_id` int(11) NOT NULL,
+                `friend_id` int(11) NOT NULL,
+                `message_text` text NOT NULL,
+                `created_at` datetime DEFAULT current_timestamp(),
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+        
+        echo "All tables created successfully!\n";
+        
+    } catch (PDOException $e) {
+        throw new Exception("Database initialization failed: " . $e->getMessage());
+    }
 }
 
 /**
