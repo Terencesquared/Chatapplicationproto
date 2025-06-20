@@ -64,9 +64,11 @@ class Database {
             
             // Add SSL options for PostgreSQL on Render
             if (DB_TYPE === 'pgsql') {
-                $options[PDO::PGSQL_ATTR_DISABLE_PREPARES] = false;
+                // Only set PGSQL_ATTR_DISABLE_PREPARES if it exists (not all PHP builds have it)
+                if (defined('PDO::PGSQL_ATTR_DISABLE_PREPARES')) {
+                    $options[PDO::PGSQL_ATTR_DISABLE_PREPARES] = false;
+                }
             } else {
-                // Only add MySQL-specific attribute if using MySQL and the constant exists
                 if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
                     $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES " . DB_CHARSET;
                 }
