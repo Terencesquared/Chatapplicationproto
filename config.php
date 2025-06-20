@@ -3,9 +3,19 @@
  * Database Configuration File
  * Contains database connection settings and security configurations
  */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
+// Only display errors when explicitly requested, not in API responses
+if (php_sapi_name() === 'cli' || (isset($_GET['debug']) && $_GET['debug'] === '1')) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    // For web requests, log errors but don't display them to prevent HTML in JSON
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    error_reporting(E_ALL);
+    ini_set('log_errors', 1);
+}
 
 // Environment-based Database Configuration
 if (isset($_SERVER['DATABASE_URL'])) {
@@ -81,15 +91,11 @@ class Database {
             error_log("Database connection failed: " . $e->getMessage());
             // Don't expose sensitive database information to users
             if (php_sapi_name() === 'cli') {
-                // If runningfrom command line, show detailed error
+                // If running from command line, show detailed error
                 die("Database connection failed: " . $e->getMessage() . "\n");
             } else {
-                // If running from web, show generic error
-                http_response_code(500);
-                die(json_encode([
-                    'success' => false,
-                    'message' => 'Database connection failed. Please try again later.'
-                ]));
+                // If running from web, throw exception to be handled by calling code
+                throw new Exception("Database connection failed. Please check your configuration.");
             }
         }
     }
@@ -125,10 +131,10 @@ class Database {
 }
 
 /**
- * Initialize database tables
+ * Initialize database tables (only call explicitly, not automatically)
  * Creates all required tables for the chat application
  */
-function initializeDatabase() {
+function createDatabaseTables() {
     try {
         $db = Database::getInstance()->getConnection();
         
@@ -137,7 +143,10 @@ function initializeDatabase() {
             $db->exec("SET FOREIGN_KEY_CHECKS = 1");
         }
         
-        echo "Creating users table...\n";
+        if (php_sapi_name() === 'cli') {
+            echo "Creating users table...\n";
+        }
+        
         if (DB_TYPE === 'pgsql') {
             // PostgreSQL version
             $db->exec("
@@ -169,7 +178,10 @@ function initializeDatabase() {
             ");
         }
         
-        echo "Creating chat_rooms table...\n";
+        if (php_sapi_name() === 'cli') {
+            echo "Creating chat_rooms table...\n";
+        }
+        
         if (DB_TYPE === 'pgsql') {
             // PostgreSQL version
             $db->exec("
@@ -200,11 +212,17 @@ function initializeDatabase() {
             ");
         }
         
-        echo "Creating messages table...\n";
+        if (php_sapi_name() === 'cli') {
+            echo "Creating messages table...\n";
+        }
+        
         if (DB_TYPE === 'pgsql') {
-            // PostgreSQL version
+            // PostgreSQL version - check if enum exists first
+            $enumExists = $db->query("SELECT 1 FROM pg_type WHERE typname = 'message_type_enum'")->fetch();
+            if (!$enumExists) {
+                $db->exec("CREATE TYPE message_type_enum AS ENUM ('text', 'image', 'file')");
+            }
             $db->exec("
-                CREATE TYPE message_type_enum AS ENUM ('text', 'image', 'file');
                 CREATE TABLE IF NOT EXISTS messages (
                     id SERIAL PRIMARY KEY,
                     room_id INTEGER NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
@@ -233,11 +251,17 @@ function initializeDatabase() {
             ");
         }
         
-        echo "Creating room_participants table...\n";
+        if (php_sapi_name() === 'cli') {
+            echo "Creating room_participants table...\n";
+        }
+        
         if (DB_TYPE === 'pgsql') {
             // PostgreSQL version
+            $enumExists = $db->query("SELECT 1 FROM pg_type WHERE typname = 'role_enum'")->fetch();
+            if (!$enumExists) {
+                $db->exec("CREATE TYPE role_enum AS ENUM ('admin', 'member')");
+            }
             $db->exec("
-                CREATE TYPE role_enum AS ENUM ('admin', 'member');
                 CREATE TABLE IF NOT EXISTS room_participants (
                     room_id INTEGER NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
                     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -262,104 +286,15 @@ function initializeDatabase() {
             ");
         }
         
-        echo "Creating room_members table...\n";
-        if (DB_TYPE === 'pgsql') {
-            // PostgreSQL version
-            $db->exec("
-                CREATE TYPE member_role_enum AS ENUM ('member', 'admin', 'owner');
-                CREATE TABLE IF NOT EXISTS room_members (
-                    id SERIAL PRIMARY KEY,
-                    room_id INTEGER NOT NULL REFERENCES chat_rooms(id) ON DELETE CASCADE,
-                    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                    role member_role_enum NOT NULL DEFAULT 'member',
-                    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-                    UNIQUE(room_id, user_id)
-                )
-            ");
-        } else {
-            // MySQL version
-            $db->exec("
-                CREATE TABLE IF NOT EXISTS `room_members` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `room_id` int(11) NOT NULL,
-                    `user_id` int(11) NOT NULL,
-                    `role` enum('member','admin','owner') NOT NULL DEFAULT 'member',
-                    `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
-                    `is_active` tinyint(1) NOT NULL DEFAULT 1,
-                    PRIMARY KEY (`id`),
-                    UNIQUE KEY `unique_room_user` (`room_id`,`user_id`),
-                    KEY `fk_user` (`user_id`),
-                    CONSTRAINT `fk_room` FOREIGN KEY (`room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
-                    CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-            ");
+        if (php_sapi_name() === 'cli') {
+            echo "All tables created successfully!\n";
         }
         
-        echo "Creating friends table...\n";
-        if (DB_TYPE === 'pgsql') {
-            // PostgreSQL version
-            $db->exec("
-                CREATE TYPE friend_status_enum AS ENUM ('pending', 'accepted', 'declined', 'blocked');
-                CREATE TABLE IF NOT EXISTS friends (
-                    id SERIAL PRIMARY KEY,
-                    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                    friend_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                    status friend_status_enum DEFAULT 'pending',
-                    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    accepted_at TIMESTAMP NULL,
-                    UNIQUE(user_id, friend_id)
-                )
-            ");
-        } else {
-            // MySQL version
-            $db->exec("
-                CREATE TABLE IF NOT EXISTS `friends` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `user_id` int(11) NOT NULL,
-                    `friend_id` int(11) NOT NULL,
-                    `status` enum('pending','accepted','declined','blocked') DEFAULT 'pending',
-                    `requested_at` datetime DEFAULT current_timestamp(),
-                    `accepted_at` datetime DEFAULT NULL,
-                    PRIMARY KEY (`id`),
-                    UNIQUE KEY `unique_friendship` (`user_id`,`friend_id`),
-                    KEY `friend_id` (`friend_id`),
-                    CONSTRAINT `friends_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-                    CONSTRAINT `friends_ibfk_2` FOREIGN KEY (`friend_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-            ");
-        }
-        
-        echo "Creating direct_messages table...\n";
-        if (DB_TYPE === 'pgsql') {
-            // PostgreSQL version
-            $db->exec("
-                CREATE TABLE IF NOT EXISTS direct_messages (
-                    id SERIAL PRIMARY KEY,
-                    user_id INTEGER NOT NULL,
-                    friend_id INTEGER NOT NULL,
-                    message_text TEXT NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ");
-        } else {
-            // MySQL version
-            $db->exec("
-                CREATE TABLE IF NOT EXISTS `direct_messages` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `user_id` int(11) NOT NULL,
-                    `friend_id` int(11) NOT NULL,
-                    `message_text` text NOT NULL,
-                    `created_at` datetime DEFAULT current_timestamp(),
-                    PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-            ");
-        }
-        
-        echo "All tables created successfully!\n";
+        return true;
         
     } catch (PDOException $e) {
-        throw new Exception("Database initialization failed: " . $e->getMessage());
+        error_log("Database table creation failed: " . $e->getMessage());
+        throw new Exception("Database table creation failed: " . $e->getMessage());
     }
 }
 
@@ -439,5 +374,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Uncomment the line below to initialize the database on first run
- //initializeDatabase();
+// Only create tables if explicitly requested (to avoid output during API calls)
+if (php_sapi_name() === 'cli' || (isset($_GET['init_db']) && $_GET['init_db'] === '1')) {
+    createDatabaseTables();
+}
+?>

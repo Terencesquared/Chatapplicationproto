@@ -1,12 +1,38 @@
 <?php
-session_start(); // Start session at the very top
+// Prevent any HTML output and handle errors properly for JSON API
+error_reporting(E_ALL); // Keep error reporting for logging
+ini_set('display_errors', 0); // Don't display errors to prevent HTML in JSON
+ini_set('log_errors', 1); // Log errors instead
+
+// Start output buffering to catch any unwanted output
+ob_start();
+
+// Set JSON response header early
+header('Content-Type: application/json');
+
+// Check if config.php exists
+if (!file_exists('config.php')) {
+    ob_clean(); // Clear any output
+    echo json_encode([
+        'success' => false,
+        'message' => 'Configuration file not found.'
+    ]);
+    exit;
+}
+
 require_once 'config.php';
 
 // Initialize database with sample data
 function initializeDatabase() {
-    $db = Database::getInstance()->getConnection();
+    try {
+        $db = Database::getInstance()->getConnection();
+    } catch (Exception $e) {
+        error_log("Database connection failed: " . $e->getMessage());
+        return false;
+    }
 
     try {
+        // Check if we have sample data already
         $stmt = $db->query("SELECT COUNT(*) as count FROM users");
         $result = $stmt->fetch();
 
@@ -108,14 +134,19 @@ function initializeDatabase() {
 
 // Authenticate user
 function authenticateUser($username, $password) {
-    $db = Database::getInstance()->getConnection();
+    try {
+        $db = Database::getInstance()->getConnection();
+    } catch (Exception $e) {
+        error_log("Database connection failed during auth: " . $e->getMessage());
+        return false;
+    }
 
     try {
         $stmt = $db->prepare("SELECT id, username, full_name, email, password_hash FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $username]);
         $user = $stmt->fetch();
 
-        if ($user && verifyPassword($password, $user['password_hash'])) {
+        if ($user && function_exists('verifyPassword') && verifyPassword($password, $user['password_hash'])) {
             unset($user['password_hash']);
             return $user;
         }
@@ -131,14 +162,31 @@ function isLoggedIn() {
     return isset($_SESSION['user_id'], $_SESSION['username'], $_SESSION['full_name'], $_SESSION['email']);
 }
 
-// Initialize database
-initializeDatabase();
+// Check required functions exist
+if (!function_exists('hashPassword') || !function_exists('verifyPassword')) {
+    ob_clean(); // Clear any output
+    echo json_encode([
+        'success' => false,
+        'message' => 'Required password functions not found in config.php'
+    ]);
+    exit;
+}
+
+// Initialize database (but don't run the full table creation from config.php)
+if (!initializeDatabase()) {
+    ob_clean(); // Clear any output
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database initialization failed'
+    ]);
+    exit;
+}
 
 // Handle action
 $action = $_GET['action'] ?? ($_POST['action'] ?? 'login');
 
-// Set JSON response header
-header('Content-Type: application/json');
+// Clear any unwanted output before sending JSON
+ob_clean();
 
 switch ($action) {
     case 'check':
