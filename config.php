@@ -1,9 +1,4 @@
 <?php
-/**
- * Database Configuration File
- * Contains database connection settings and security configurations
- */
-
 // Only display errors when explicitly requested, not in API responses
 if (php_sapi_name() === 'cli' || (isset($_GET['debug']) && $_GET['debug'] === '1')) {
     ini_set('display_errors', 1);
@@ -17,36 +12,28 @@ if (php_sapi_name() === 'cli' || (isset($_GET['debug']) && $_GET['debug'] === '1
     ini_set('log_errors', 1);
 }
 
-// Environment-based Database Configuration
-if (isset($_SERVER['DATABASE_URL'])) {
-    // Production - Render PostgreSQL
-    $db_url = parse_url($_SERVER['DATABASE_URL']);
-    define('DB_HOST', $db_url['host']);
-    define('DB_NAME', ltrim($db_url['path'], '/'));
-    define('DB_USER', $db_url['user']);
-    define('DB_PASS', $db_url['pass']);
-    define('DB_PORT', isset($db_url['port']) ? $db_url['port'] : 5432);
-    define('DB_CHARSET', 'utf8');
-    define('DB_TYPE', 'pgsql'); // PostgreSQL for production
-} else {
-    // Local development - MySQL
-    define('DB_HOST', 'localhost');
-    define('DB_NAME', 'chat_app');
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-    define('DB_PORT', 3306);
-    define('DB_CHARSET', 'utf8mb4');
-    define('DB_TYPE', 'mysql'); // MySQL for local
-}
+// --- HARDCODED Render.com PostgreSQL credentials ---
+define('DB_HOST', 'dpg-d1a56badbo4c73c5h6t0-a');
+define('DB_NAME', 'chat_app_5xhp');
+define('DB_USER', 'root');
+define('DB_PASS', 'hOxMiwb7mEqRxGE05W4cuQxtPgB2Y27F');
+define('DB_PORT', 5432);
+define('DB_CHARSET', 'utf8');
+define('DB_TYPE', 'pgsql'); // PostgreSQL for production
 
 // Security Configuration
-define('SECRET_KEY', 'your-secret-key-here-change-in-production');
+define('SECRET_KEY', isset($_SERVER['SECRET_KEY']) ? $_SERVER['SECRET_KEY'] : 'your-secret-key-here-change-in-production');
 define('SESSION_LIFETIME', 3600 * 24); // 24 hours
 define('CSRF_TOKEN_LIFETIME', 3600); // 1 hour
 
 // Application Configuration
 define('APP_NAME', 'ChatApp');
-define('BASE_URL', 'http://localhost/chatapp');
+// Use environment variable for BASE_URL in production
+if (isset($_SERVER['RENDER_EXTERNAL_URL'])) {
+    define('BASE_URL', $_SERVER['RENDER_EXTERNAL_URL']);
+} else {
+    define('BASE_URL', 'http://localhost/chatapp');
+}
 define('UPLOAD_DIR', 'uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 
@@ -62,8 +49,8 @@ class Database {
         try {
             // Build DSN based on database type
             if (DB_TYPE === 'pgsql') {
-                // PostgreSQL DSN
-                $dsn = "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME;
+                // PostgreSQL DSN with SSL mode for Render
+                $dsn = "pgsql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";sslmode=require";
             } else {
                 // MySQL DSN
                 $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
@@ -75,9 +62,14 @@ class Database {
                 PDO::ATTR_EMULATE_PREPARES => false
             ];
             
-            // Only add MySQL-specific attribute if using MySQL and the constant exists
-            if (DB_TYPE === 'mysql' && defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
-                $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES " . DB_CHARSET;
+            // Add SSL options for PostgreSQL on Render
+            if (DB_TYPE === 'pgsql') {
+                $options[PDO::PGSQL_ATTR_DISABLE_PREPARES] = false;
+            } else {
+                // Only add MySQL-specific attribute if using MySQL and the constant exists
+                if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+                    $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES " . DB_CHARSET;
+                }
             }
             
             $this->connection = new PDO($dsn, DB_USER, DB_PASS, $options);
@@ -85,6 +77,11 @@ class Database {
             // Alternative way to set charset for MySQL if the constant doesn't exist
             if (DB_TYPE === 'mysql' && !defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
                 $this->connection->exec("SET NAMES " . DB_CHARSET);
+            }
+            
+            // Set timezone for PostgreSQL
+            if (DB_TYPE === 'pgsql') {
+                $this->connection->exec("SET timezone = 'UTC'");
             }
             
         } catch (PDOException $e) {
